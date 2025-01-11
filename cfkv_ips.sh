@@ -11,6 +11,7 @@ urlencode() {
 
     [ -z "$string" ] && return
 
+    pos=0  # 初始化 pos
     while [ $pos -lt ${#string} ]; do
         c=${string:$pos:1}
         case "$c" in
@@ -37,7 +38,7 @@ for FILENAME in "${files[@]}"; do
     if [ -f "$FILENAME" ]; then
         # 逐行读取文件前65行内容进行Base64编码，避免大文件时内存占用过多问题
         BASE64_TEXT=""
-        line_count=0
+        line_count=0  # 初始化 line_count
         while IFS= read -r line; do
             count_as_int=$(printf '%d' "$line_count")
             # 添加验证逻辑，确保count_as_int是合法整数
