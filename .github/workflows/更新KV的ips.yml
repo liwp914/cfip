@@ -4,12 +4,11 @@ on: [push]  # 你可以在 push 事件时触发此工作流程
 
 jobs:
   update-data:
-    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 运行环境
+    runs-on: ubuntu-latest  # 使用最新的Ubuntu运行环境
 
     env:  # 在这里设置环境变量
       CF_DOMAIN: ${{ secrets.CF_DOMAIN }}
       CF_TOKEN: ${{ secrets.CF_TOKEN }}
-      FILENAME: HK1.txt
 
     steps:
       - name: Checkout repository
@@ -19,13 +18,22 @@ jobs:
         run: |
           echo "CF_DOMAIN=${{ env.CF_DOMAIN }}" >> $GITHUB_ENV
           echo "CF_TOKEN=${{ env.CF_TOKEN }}" >> $GITHUB_ENV
-          echo "FILENAME=${{ env.FILENAME }}" >> $GITHUB_ENV
 
       - name: Make script executable
-        run: chmod +x ./cfkv_ips.sh
+        run: chmod +x./cfkv_ips.sh
 
-      - name: Run update script
-        run: ./cfkv_ips.sh "${{ env.FILENAME }}"
+      - name: Get files list
+        run: |
+          cd ip443
+          files=$(ls HK1.txt KR1.txt JP1.txt SG1.txt US1.txt)  # 根据实际需要添加更多文件名
+          echo "FILES=${files}" >> $GITHUB_ENV
+
+      - name: Loop through files and run script
+        run: |
+          IFS=' ' read -ra FILE_ARRAY <<< "${{ env.FILES }}"
+          for file in "${FILE_ARRAY[@]}"; do
+           ./cfkv_ips.sh "${file}"
+          done
 
       - name: Wait for 5 seconds
         run: sleep 5
