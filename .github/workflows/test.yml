@@ -1,0 +1,62 @@
+name: cfip
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */7 * * *'  # 每七小时运行一次，可以根据需求调整时间
+
+permissions:
+  contents: write
+
+jobs:
+  update_data:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: echo "开始更新"
+
+    - name: 检出代码
+      uses: actions/checkout@v2
+
+    - name: 删除旧数据
+      run: rm -rf ./ip*
+
+    - name: 获取源数据
+      run: |
+        wget -N https://zip.baipiao.eu.org -O ip.zip
+        unzip ip.zip -d ./ips
+        rm ip.zip
+
+    - name: 设置 Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: 安装依赖
+      run: pip install -r ./requirements.txt
+
+    - name: 运行 t1.py
+      run: python t1.py
+
+   # - name: 运行 main2.py
+   #   run: python main2.py
+
+   # - name: 运行 main3.py
+   #   run: python main3.py
+
+   # - name: 运行 main4.py
+   #   run: python main4.py
+
+   # - name: 运行 main5.py
+   #   run: python main5.py
+
+    # - name: 运行 main6.py
+    #   run: python main6.py
+
+    - name: 提交并推送更改
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -am "更新结果"
+        git push origin main
