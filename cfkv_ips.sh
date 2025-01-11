@@ -39,13 +39,18 @@ for FILENAME in "${files[@]}"; do
         BASE64_TEXT=""
         line_count=0
         while IFS= read -r line; do
-            # 使用一个临时变量来转换line_count为整数，避免可能的类型问题
-            local count_as_int=$(printf '%d' "$line_count")
-            if [ "$count_as_int" -lt 65 ]; then
-                BASE64_TEXT+=$(echo "$line" | base64)
-                line_count=$((line_count + 1))
+            count_as_int=$(printf '%d' "$line_count")
+            # 添加验证逻辑，确保count_as_int是合法整数
+            if [[ "$count_as_int" =~ ^[0-9]+$ ]]; then
+                if [ "$count_as_int" -lt 65 ]; then
+                    BASE64_TEXT+=$(echo "$line" | base64)
+                    line_count=$((line_count + 1))
+                else
+                    break
+                fi
             else
-                break
+                echo "转换后的行数变量不是合法整数，可能出现问题，当前文件: $FILENAME，当前行数: $line_count"
+                continue
             fi
             # 每次循环添加调试输出，方便查看变量值是否正常变化
             echo "DEBUG: 当前处理文件 $FILENAME，已读取行数: $line_count，当前Base64编码内容长度: ${#BASE64_TEXT}"
