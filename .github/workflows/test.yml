@@ -35,8 +35,8 @@ jobs:
     - name: 安装依赖
       run: pip install -r ./requirements.txt
 
-    - name: 运行 t1.py
-      run: python t1.py
+    - name: 运行 t2.py
+      run: python t2.py
 
    # - name: 运行 main2.py
    #   run: python main2.py
