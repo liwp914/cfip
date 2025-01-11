@@ -39,7 +39,9 @@ for FILENAME in "${files[@]}"; do
         BASE64_TEXT=""
         line_count=0
         while IFS= read -r line; do
-            if [ "$line_count" -lt 65 ]; then
+            # 使用一个临时变量来转换line_count为整数，避免可能的类型问题
+            local count_as_int=$(printf '%d' "$line_count")
+            if [ "$count_as_int" -lt 65 ]; then
                 BASE64_TEXT+=$(echo "$line" | base64)
                 line_count=$((line_count + 1))
             else
