@@ -35,8 +35,3 @@ jobs:
            ./cfkv_ips.sh "${file}"
           done
 
-      - name: Wait for 5 seconds
-        run: sleep 5
-
-      - name: Output completion message
-        run: echo "更新数据完成,倒数5秒后自动关闭窗口..."
