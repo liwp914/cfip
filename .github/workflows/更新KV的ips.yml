@@ -20,7 +20,7 @@ jobs:
           echo "CF_TOKEN=${{ env.CF_TOKEN }}" >> $GITHUB_ENV
 
       - name: Make script executable
-        run: chmod +x./cfkv_ips.sh
+        run: chmod +x cfkv_ips.sh
 
       - name: Get files list
         run: |
