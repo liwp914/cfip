@@ -1,0 +1,57 @@
+name: Upload Files to CF Domain
+
+on:
+  push:
+    branches:
+      - main  # 仅在推送至 main 分支时触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up environment variables
+      run: |
+        echo "CF_DOMAIN=${{ secrets.CF_DOMAIN }}" >> $GITHUB_ENV
+        echo "CF_TOKEN=${{ secrets.CF_TOKEN }}" >> $GITHUB_ENV
+
+    - name: Upload files
+      run: |
+        # 从环境变量中获取 CF_DOMAIN 和 CF_TOKEN
+        CF_DOMAIN="${CF_DOMAIN}"
+        CF_TOKEN="${CF_TOKEN}"
+
+        # 指定文件夹路径
+        FOLDER_PATH="443ip"
+
+        # 遍历文件夹中所有匹配 *1.txt 的文件
+        for FILENAME in "${FOLDER_PATH}"/*1.txt; do
+          # 检查文件是否存在
+          if [ ! -f "$FILENAME" ]; then
+            echo "文件不存在: $FILENAME"
+            continue
+          fi
+
+          # 获取文件名（不含路径）
+          FILENAME_ONLY=$(basename "$FILENAME")
+
+          # 读取文件的前 65 行内容并进行 Base64 编码
+          BASE64_TEXT=$(head -n 65 "$FILENAME" | base64 -w 0)
+
+          # 构建 URL
+          URL="https://${CF_DOMAIN}/${FILENAME_ONLY}?token=${CF_TOKEN}&b64=${BASE64_TEXT}"
+
+          # 使用 curl 发送请求
+          curl -s "$URL" -o /dev/null &
+
+          # 等待 curl 请求完成
+          wait
+
+          echo "文件 $FILENAME 上传完成"
+        done
+
+        echo "所有文件上传完成,倒数5秒后自动关闭窗口..."
+        sleep 5
