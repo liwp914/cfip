@@ -1,4 +1,4 @@
-name: cfip
+name: cfip_HK
 
 on:
   workflow_dispatch:
