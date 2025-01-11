@@ -38,9 +38,13 @@ for FILENAME in "${files[@]}"; do
         # 逐行读取文件前65行内容进行Base64编码，避免大文件时内存占用过多问题
         BASE64_TEXT=""
         line_count=0
-        while IFS= read -r line && [ "$line_count" -lt 65 ]; do  # 明确指定IFS为空，避免空格等干扰读取
-            BASE64_TEXT+=$(echo "$line" | base64)
-            line_count=$((line_count + 1))
+        while IFS= read -r line; do
+            if [ "$line_count" -lt 65 ]; then
+                BASE64_TEXT+=$(echo "$line" | base64)
+                line_count=$((line_count + 1))
+            else
+                break
+            fi
             # 每次循环添加调试输出，方便查看变量值是否正常变化
             echo "DEBUG: 当前处理文件 $FILENAME，已读取行数: $line_count，当前Base64编码内容长度: ${#BASE64_TEXT}"
         done < "$FILENAME"
