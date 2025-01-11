@@ -1,0 +1,48 @@
+name: 更新KV的ips-1版
+
+on: [push]  # 你可以在 push 事件时触发此工作流程
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest  # 使用最新的Ubuntu运行环境
+
+    env:  # 在这里设置环境变量
+      CF_DOMAIN: ${{ secrets.CF_DOMAIN }}
+      CF_TOKEN: ${{ secrets.CF_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3  # 检出代码仓库
+
+      - name: Set up environment
+        run: |
+          echo "CF_DOMAIN=${{ env.CF_DOMAIN }}" >> $GITHUB_ENV
+          echo "CF_TOKEN=${{ env.CF_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Make script executable
+        run: chmod +x cfkv_ips.sh
+
+      - name: Get files list
+        run: |
+          cd ip443
+          files=$(ls *1.txt)  # 使用通配符获取所有.txt文件的文件名
+          valid_files=""
+          for file in $files; do
+            if [ -f "$file" ]; then
+              valid_files="$valid_files $file"
+            else
+              echo "文件 $file 不存在，将从处理列表中移除。"
+            fi
+          done
+          echo "FILES=${valid_files}" >> $GITHUB_ENV
+
+      - name: Loop through files and run script
+        run: |
+          IFS=' ' read -ra FILE_ARRAY <<< "${{ env.FILES }}"
+          for file in "${FILE_ARRAY[@]}"; do
+            if./cfkv_ips.sh "${file}"; then
+              echo "文件 $file 的数据更新成功。"
+            else
+              echo "文件 $file 的数据更新失败，请查看日志或相关错误信息进一步排查。"
+            fi
+          done
