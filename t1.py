@@ -71,8 +71,8 @@ def process_ipinfo(ipinfo, port):
 
 
 def copy_and_modify_file():
-    source_file = "./ip443/hk.txt"
-    target_file = "./ip443/hk1.txt"
+    source_file = "https://github.com/liwp914/cfip/blob/main/ip443/HK.txt"
+    target_file = "https://github.com/liwp914/cfip/blob/main/ip443/HK1.txt"
     if os.path.exists(source_file):
         with open(source_file, "r", encoding="utf-8") as source, open(target_file, "w", encoding="utf-8") as target:
             for line in source:
