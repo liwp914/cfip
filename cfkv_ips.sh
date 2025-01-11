@@ -1,6 +1,7 @@
 #!/bin/bash
+
 # 切换到ip443目录（根据实际情况调整路径，如果相对路径不行可使用绝对路径）
-# cd ip443 || { echo "无法切换到ip443目录，脚本退出。" >&2; exit 1; }
+cd ip443 || { echo "无法切换到ip443目录，脚本退出。" >&2; exit 1; }
 
 # 自定义URL编码函数，用于对文件名等进行URL编码（解决bash没有内置urlencode函数的问题）
 urlencode() {
@@ -30,9 +31,6 @@ CF_TOKEN="${CF_TOKEN}"
 # 获取传入的所有文件名参数（假设在GitHub Actions中会传入多个文件名作为参数）
 files=("$@")
 
-# 切换到ip443目录（根据实际情况调整路径，如果相对路径不行可使用绝对路径）
-cd ip443 || { echo "无法切换到ip443目录，脚本退出。" >&2; exit 1; }
-
 # 循环处理每个文件
 for FILENAME in "${files[@]}"; do
     # 判断文件是否存在，如果不存在则跳过该文件的处理
@@ -40,9 +38,11 @@ for FILENAME in "${files[@]}"; do
         # 逐行读取文件前65行内容进行Base64编码，避免大文件时内存占用过多问题
         BASE64_TEXT=""
         line_count=0
-        while read -r line && [ $line_count -lt 65 ]; do
+        while IFS= read -r line && [ "$line_count" -lt 65 ]; do  # 明确指定IFS为空，避免空格等干扰读取
             BASE64_TEXT+=$(echo "$line" | base64)
             line_count=$((line_count + 1))
+            # 每次循环添加调试输出，方便查看变量值是否正常变化
+            echo "DEBUG: 当前处理文件 $FILENAME，已读取行数: $line_count，当前Base64编码内容长度: ${#BASE64_TEXT}"
         done < "$FILENAME"
         BASE64_TEXT=$(echo -n "$BASE64_TEXT" | base64 -w 0)
 
