@@ -70,25 +70,24 @@ def process_ipinfo(ipinfo, port):
         only_ip.to_csv(save_dir + countryCode + '.txt', header=None, index=False)
 
 
-def main(port):
-    ips = gatherip(port)
-    print(f"Total ips: {len(ips)}")
-    ipinfo = get_ip_info(ips)
-    process_ipinfo(ipinfo, port)
-
-    # 新增功能：复制文件并添加字符到每行
-    copy_and_modify_file(port)
-
-
-def copy_and_modify_file(port):
-    source_file = f"./ip{port}/hk.txt"
-    target_file = f"./ip{port}/hk1.txt"
+def copy_and_modify_file():
+    source_file = "./ip443/hk.txt"
+    target_file = "./ip443/hk1.txt"
     if os.path.exists(source_file):
         with open(source_file, "r", encoding="utf-8") as source, open(target_file, "w", encoding="utf-8") as target:
             for line in source:
                 target.write(line.strip() + "#HK\n")
     else:
         print(f"源文件 {source_file} 不存在，无法进行复制和修改操作。")
+
+
+def main(port):
+    ips = gatherip(port)
+    print(f"Total ips: {len(ips)}")
+    ipinfo = get_ip_info(ips)
+    process_ipinfo(ipinfo, port)
+
+    copy_and_modify_file()
 
 
 if __name__ == "__main__":
