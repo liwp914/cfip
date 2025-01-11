@@ -40,7 +40,7 @@ jobs:
         run: |
           IFS=' ' read -ra FILE_ARRAY <<< "${{ env.FILES }}"
           for file in "${FILE_ARRAY[@]}"; do
-            if cfkv_ips.sh "${file}"; then
+            if ./cfkv_ips.sh "${file}"; then
               echo "文件 $file 的数据更新成功。"
             else
               echo "文件 $file 的数据更新失败，请查看日志或相关错误信息进一步排查。"
