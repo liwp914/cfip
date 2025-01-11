@@ -25,7 +25,7 @@ jobs:
         CF_TOKEN="${CF_TOKEN}"
 
         # 指定文件夹路径
-        FOLDER_PATH="443ip"
+        FOLDER_PATH="ip443"
 
         # 遍历文件夹中所有匹配 *1.txt 的文件
         for FILENAME in "${FOLDER_PATH}"/*1.txt; do
