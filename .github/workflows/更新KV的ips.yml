@@ -9,7 +9,7 @@ jobs:
     env:  # 在这里设置环境变量
       CF_DOMAIN: ${{ secrets.CF_DOMAIN }}
       CF_TOKEN: ${{ secrets.CF_TOKEN }}
-      FILENAME: HK1.txt
+      FILENAME: /ip443/HK1.txt
 
     steps:
       - name: Checkout repository
