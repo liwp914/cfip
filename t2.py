@@ -78,7 +78,7 @@ def copy_and_modify_file():
         if os.path.exists(source_file):
             with open(source_file, "r", encoding="utf-8") as source, open(target_file, "w", encoding="utf-8") as target:
                 for line in source:
-                    target.write(line.strip() + f"#{country}\n")
+                    target.write(line.strip() + f"#{country}🍀\n")
         else:
             print(f"源文件 {source_file} 不存在，无法进行复制和修改操作。")
 
