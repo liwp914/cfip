@@ -61,8 +61,8 @@ jobs:
           # 获取文件名（不含路径）
           FILENAME_ONLY=$(basename "$FILENAME")
 
-          # 读取文件的前 65 行内容并进行 Base64 编码
-          BASE64_TEXT=$(head -n 65 "$FILENAME" | base64 -w 0)
+          # 读取文件的前 15 行内容并进行 Base64 编码
+          BASE64_TEXT=$(head -n 15 "$FILENAME" | base64 -w 0)
 
           # 构建 URL
           URL="https://${CF_DOMAIN}/${FILENAME_ONLY}?token=${CF_TOKEN}&b64=${BASE64_TEXT}"
